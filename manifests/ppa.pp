@@ -13,18 +13,10 @@
 #   Optional if lsb-release is installed (unless you're using a different release than indicated by lsb-release, e.g., Linux Mint). 
 #   Specifies the operating system of your node. Valid options: a string containing a valid LSB distribution codename.
 #
-# @param package_name
-#   Names the package that provides the `apt-add-repository` command. Default: 'software-properties-common'.
-#
-# @param package_manage
-#   Specifies whether Puppet should manage the package that provides `apt-add-repository`.
-#
 define apt::ppa(
   String $ensure                 = 'present',
   Optional[String] $options      = $::apt::ppa_options,
   Optional[String] $release      = $facts['lsbdistcodename'],
-  Optional[String] $package_name = $::apt::ppa_package,
-  Boolean $package_manage        = false,
 ) {
   unless $release {
     fail(translate('lsbdistcodename fact not available: release parameter required'))
@@ -57,12 +49,7 @@ define apt::ppa(
   }
 
   if $ensure == 'present' {
-    if $package_manage {
-      ensure_packages($package_name)
-      $_require = [File['sources.list.d'], Package[$package_name]]
-    } else {
-      $_require = File['sources.list.d']
-    }
+    $_require = File['sources.list.d']
 
     $_proxy = $::apt::_proxy
     if $_proxy['host'] {

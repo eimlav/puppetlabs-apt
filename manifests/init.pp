@@ -290,6 +290,7 @@ class apt (
     create_resources('apt::pin', $pins)
   }
 
-  # required for adding GPG keys on Debian 9 (and derivatives)
-  ensure_packages(['dirmngr'])
+  # dirmngr - Required for adding GPG keys on Debian 9 (and derivatives)
+  # $ppa_package - Required for adding PPAs.
+  ensure_packages(['dirmngr', "${ppa_package}"])
 }
